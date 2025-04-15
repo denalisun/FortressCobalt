@@ -133,7 +133,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>../vendor</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -147,6 +147,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\vendor\FortniteSDK\SDK\Basic.cpp" />
+    <ClCompile Include="..\vendor\FortniteSDK\SDK\CoreUObject_functions.cpp" />
+    <ClCompile Include="..\vendor\FortniteSDK\SDK\Engine_functions.cpp" />
+    <ClCompile Include="..\vendor\FortniteSDK\SDK\FortniteGame_functions.cpp" />
     <ClCompile Include="dllmain.cpp" />
   </ItemGroup>
   <ItemGroup>

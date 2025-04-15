@@ -9,6 +9,9 @@
 #include "../vendor/cURL/curl.h"
 #include "url.h"
 
+#include "FortniteSDK/SDK.hpp"
+using namespace SDK;
+
 inline CURLcode(*CurlSetOpt)(struct Curl_easy*, CURLoption, va_list) = nullptr;
 inline CURLcode(*CurlEasySetOpt)(struct Curl_easy*, CURLoption, ...) = nullptr;
 
@@ -30,6 +33,10 @@ std::string ReplaceString(std::string subject, const std::string& search, const 
 		pos += replace.length();
 	}
 	return subject;
+}
+
+bool contains(std::string_view str, std::string_view substr) {
+	return str.find(substr) != std::string_view::npos;
 }
 
 #define XOR
@@ -86,31 +93,38 @@ inline CURLcode CurlEasySetOptDetour(struct Curl_easy* data, CURLoption tag, ...
 			|| uri.Host.ends_with(XOR(".akamaized.net"))
 			|| uri.Host.ends_with(XOR("on.epicgames.com"))
 			|| uri.Host.ends_with(XOR("game-social.epicgames.com"))
-			|| uri.Host.contains(XOR("superawesome.com"))
-			|| uri.Host.contains(XOR("ak.epicgames.com")))
+			|| contains(uri.Host, XOR("superawesome.com"))
+			|| contains(uri.Host, XOR("ak.epicgames.com")))
 		{
 			if (CobaltUsage == ECobaltUsage::Private)
 			{
 				url = Uri::CreateUri(URL_PROTOCOL, URL_HOST, URL_PORT, uri.Path, uri.QueryString);
+
+				if (contains(uri.Path, "/fortnite/api/game/v2/matchmakingservice/ticket/player")) {
+					UFortEngine* Engine = UObject::FindObject<SDK::UFortEngine>("FortEngine Transient.FortEngine_0");
+					UGameplayStatics* Statics = UObject::FindObject<UGameplayStatics>("GameplayStatics Engine.Default__GameplayStatics");
+					UKismetSystemLibrary* kSL = UObject::FindObject<UKismetSystemLibrary>("KismetSystemLibrary Engine.Default__KismetSystemLibrary");
+					kSL->ExecuteConsoleCommand(Engine->GameViewport->World, L"open 127.0.0.1:7777", nullptr);
+				}
 			}
 			else if (CobaltUsage == ECobaltUsage::Hybrid)
 			{
-				if (uri.Path.contains("/fortnite/api/v2/versioncheck/")) {
+				if (contains(uri.Path, "/fortnite/api/v2/versioncheck/")) {
 					url = Uri::CreateUri(URL_PROTOCOL, URL_HOST, URL_PORT, uri.Path, uri.QueryString);
 				}
-				else if (uri.Path.contains("/fortnite/api/game/v2/profile")) {
+				else if (contains(uri.Path, "/fortnite/api/game/v2/profile")) {
 					url = Uri::CreateUri(URL_PROTOCOL, URL_HOST, URL_PORT, uri.Path, uri.QueryString);
 				}
-				else if (uri.Path.contains("/content/api/pages/fortnite-game")) {
+				else if (contains(uri.Path, "/content/api/pages/fortnite-game")) {
 					url = Uri::CreateUri(URL_PROTOCOL, URL_HOST, URL_PORT, uri.Path, uri.QueryString);
 				}
-				else if (uri.Path.contains("/affiliate/api/public/affiliates/slug")) {
+				else if (contains(uri.Path, "/affiliate/api/public/affiliates/slug")) {
 					url = Uri::CreateUri(URL_PROTOCOL, URL_HOST, URL_PORT, uri.Path, uri.QueryString);
 				}
-				else if (uri.Path.contains("/socialban/api/public/v1")) {
+				else if (contains(uri.Path, "/socialban/api/public/v1")) {
 					url = Uri::CreateUri(URL_PROTOCOL, URL_HOST, URL_PORT, uri.Path, uri.QueryString);
 				}
-				else if (uri.Path.contains("/fortnite/api/cloudstorage/system")) {
+				else if (contains(uri.Path, "/fortnite/api/cloudstorage/system")) {
 					url = Uri::CreateUri(URL_PROTOCOL, URL_HOST, URL_PORT, uri.Path, uri.QueryString);
 				}
 			}
